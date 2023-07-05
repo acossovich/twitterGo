@@ -28,6 +28,8 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 			return routers.Registro(ctx)
 		case "login":
 			return routers.Login(ctx)
+		case "tweet":
+			return routers.GraboTweet(ctx, claim)
 		}
 		//
 	case "GET":
