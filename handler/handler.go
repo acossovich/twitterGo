@@ -14,7 +14,7 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 	var r models.RespApi
 	r.Status = 400
 
-	isOk, statusCode, message, _ := validoAutorization(ctx, request)
+	isOk, statusCode, message, claim := validoAutorization(ctx, request)
 	if !isOk {
 		r.Status = statusCode
 		r.Message = message
@@ -38,7 +38,8 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 		//
 	case "PUT":
 		switch ctx.Value(models.Key("path")).(string) {
-
+		case "modificarPerfil":
+			return routers.ModificarPerfil(ctx, claim)
 		}
 		//
 	case "DELETE":
@@ -64,7 +65,7 @@ func validoAutorization(ctx context.Context, request events.APIGatewayProxyReque
 		return false, 401, "Token requerido", models.Claim{}
 	}
 
-	claim, todoOk, msg, err := jwt.ProcesoToken(token, ctx.Value(models.Key("JWTSign")).(string))
+	claim, todoOk, msg, err := jwt.ProcesoToken(token, ctx.Value(models.Key("jwtSign")).(string))
 
 	if !todoOk {
 		if err != nil {
